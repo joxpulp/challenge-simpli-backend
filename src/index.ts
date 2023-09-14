@@ -17,5 +17,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  logger.info(`Server is up and running at ${port}`);
+  logger.info(`Server is up and running at PORT: ${port}`);
 });

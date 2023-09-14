@@ -3,10 +3,12 @@ import * as MotorcyclesModel from './motorcycles.model';
 import { Product, ProductFromDB, ProductResponse } from '../../utils/types/product.types';
 import { QueryParams } from '../../utils/types/query.types';
 import { SortDirection } from 'mongodb';
+import { Params } from '../../utils/types/params.types';
 
-export async function getMotorcycles(req: Request, res: Response<ProductResponse | ProductFromDB>) {
-  const { page, limit, sort_by } = req.query as QueryParams;
+export async function getMotorcycles(req: Request<Params, ProductResponse | ProductFromDB, Product, QueryParams>, res: Response<ProductResponse | ProductFromDB>) {
+  const { page, limit, sort_by } = req.query;
   const { slug } = req.params;
+
   if (slug) {
     const motorcycle = await MotorcyclesModel.findOne(slug);
     res.json(motorcycle as ProductFromDB);
@@ -16,7 +18,7 @@ export async function getMotorcycles(req: Request, res: Response<ProductResponse
   }
 }
 
-export async function postMotorcycles(req: Request<object, ProductFromDB, Product>, res: Response, next: NextFunction) {
+export async function postMotorcycles(req: Request<Params, ProductResponse | ProductFromDB, Product, QueryParams>, res: Response<ProductFromDB>, next: NextFunction) {
   try {
     const motorcycleAdded = await MotorcyclesModel.insertOne(req.body);
     res.json(motorcycleAdded);

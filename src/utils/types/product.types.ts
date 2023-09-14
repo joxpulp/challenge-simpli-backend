@@ -16,5 +16,5 @@ export type Product = z.infer<typeof Product>;
 export type ProductFromDB = WithId<Product>;
 export interface ProductResponse {
   products: ProductFromDB[];
-  meta: { current_page: number; total_pages: number; total_products: number } | null;
+  paging: { current_page: number; total_pages: number; total_products: number } | null;
 }

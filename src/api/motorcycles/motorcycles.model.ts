@@ -16,8 +16,8 @@ export async function findAll(currentPage: number = 0, limit: number = 0, sort?:
     .sort({ ...(sort && { name: sort }) })
     .toArray();
 
-  const meta = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
-  const motorcycleDataWithMeta = { products: motorcyclesData, meta };
+  const paging = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
+  const motorcycleDataWithMeta = { products: motorcyclesData, paging };
 
   return motorcycleDataWithMeta;
 }

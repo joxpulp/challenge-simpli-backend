@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
-interface ValidateData {
-  body?: AnyZodObject;
-  query?: AnyZodObject;
-  params?: AnyZodObject;
-}
+import { ZodError } from 'zod';
+import { ValidateData } from './utils/types/validateRequest.types';
 
 export function validateRequest(validateData: ValidateData) {
   return async (req: Request, res: Response, next: NextFunction) => {

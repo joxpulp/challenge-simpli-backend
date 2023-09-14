@@ -3,6 +3,7 @@ import * as MotorcyclesModel from './motorcycles.model';
 
 export async function motorcycleExist(req: Request, res: Response, next: NextFunction) {
   const { slug } = req.params;
+
   if (slug) {
     const motorcycle = await MotorcyclesModel.findOne(slug);
     if (motorcycle) {
