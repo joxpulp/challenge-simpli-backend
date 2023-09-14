@@ -1,3 +1,4 @@
+import { SortDirection } from 'mongodb';
 import { db } from '../../services/mongodb/mongodb';
 import { Product } from '../../utils/types/product.types';
 import slugify from 'slugify';
@@ -5,19 +6,20 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const Motorcycles = db.collection<Product>('motorcycles');
 
-export async function findAll(currentPage: number, limit: number) {
+export async function findAll(currentPage: number = 0, limit: number = 0, sort?: SortDirection) {
   const page = currentPage - 1;
-  const result = Motorcycles.find()
-    .skip(page * limit)
-    .limit(limit);
-  const motorcycles = await result.toArray();
-
   const totalProducts = await Motorcycles.countDocuments();
   const totalPages = Math.ceil(totalProducts / limit);
-  const meta = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
-  const motorcycleWithMeta = { products: motorcycles, meta };
+  const motorcyclesData = await Motorcycles.find()
+    .skip(page * limit)
+    .limit(limit)
+    .sort({ ...(sort && { name: sort }) })
+    .toArray();
 
-  return motorcycleWithMeta;
+  const meta = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
+  const motorcycleDataWithMeta = { products: motorcyclesData, meta };
+
+  return motorcycleDataWithMeta;
 }
 
 export async function findOne(slug: string) {

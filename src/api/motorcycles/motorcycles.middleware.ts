@@ -12,7 +12,7 @@ export async function motorcycleExist(req: Request, res: Response, next: NextFun
       next(`product with slug: ${slug}, does not exist`);
     }
   } else {
-    const motorcycles = await MotorcyclesModel.findAll(0, 0);
+    const motorcycles = await MotorcyclesModel.findAll();
     if (motorcycles) {
       next();
     } else {
