@@ -5,10 +5,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const Motorcycles = db.collection<Product>('motorcycles');
 
-export async function findAll() {
-  const result = Motorcycles.find();
+export async function findAll(currentPage: number, limit: number) {
+  const page = currentPage - 1;
+  const result = Motorcycles.find()
+    .skip(page * limit)
+    .limit(limit);
   const motorcycles = await result.toArray();
-  return motorcycles;
+
+  const totalProducts = await Motorcycles.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limit);
+  const meta = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
+  const motorcycleWithMeta = { products: motorcycles, meta };
+
+  return motorcycleWithMeta;
 }
 export async function insertOne(data: Product) {
   const productNameExist = await Motorcycles.findOne({ name: data.name });

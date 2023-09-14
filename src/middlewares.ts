@@ -3,13 +3,16 @@ import { AnyZodObject, ZodError } from 'zod';
 
 interface ValidateData {
   body?: AnyZodObject;
+  query?: AnyZodObject;
   // params: AnyZodObject;
-  // query: AnyZodObject;
 }
 
 export function validateRequest(validateData: ValidateData) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (validateData.query) {
+        req.query = await validateData.query.parseAsync(req.query);
+      }
       if (validateData.body) {
         req.body = await validateData.body.parseAsync(req.body);
       }

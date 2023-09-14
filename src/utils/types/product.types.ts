@@ -9,4 +9,9 @@ export const Product = z.object({
 });
 
 export type Product = z.infer<typeof Product>;
-export type ProductResponse = WithId<Product>;
+// interface Products extends z.infer<typeof Product> {}
+export type ProductFromDB = WithId<Product>;
+export interface ProductResponse {
+  products: ProductFromDB[];
+  meta: { current_page: number; total_pages: number; total_products: number } | null;
+}
