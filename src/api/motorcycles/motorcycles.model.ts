@@ -19,11 +19,17 @@ export async function findAll(currentPage: number, limit: number) {
 
   return motorcycleWithMeta;
 }
+
+export async function findOne(slug: string) {
+  const motorcycle = await Motorcycles.findOne({ slug });
+  return motorcycle;
+}
+
 export async function insertOne(data: Product) {
   const productNameExist = await Motorcycles.findOne({ name: data.name });
-  let slug = slugify(data.name);
+  let slug = slugify(data.name, { lower: true });
 
-  if (productNameExist) slug = slug + uuidv4();
+  if (productNameExist) slug = `${slug}-${uuidv4()}`;
 
   const insertedMotorcycles = await Motorcycles.insertOne({ ...data, slug });
   return { _id: insertedMotorcycles.insertedId, ...data, slug };

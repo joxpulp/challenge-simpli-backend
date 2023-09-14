@@ -1,20 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-
 interface ValidateData {
   body?: AnyZodObject;
   query?: AnyZodObject;
-  // params: AnyZodObject;
+  params?: AnyZodObject;
 }
 
 export function validateRequest(validateData: ValidateData) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (validateData.body) {
+        req.body = await validateData.body.parseAsync(req.body);
+      }
       if (validateData.query) {
         req.query = await validateData.query.parseAsync(req.query);
       }
-      if (validateData.body) {
-        req.body = await validateData.body.parseAsync(req.body);
+      if (validateData.params) {
+        req.params = await validateData.params.parseAsync(req.params);
       }
       next();
     } catch (error) {
