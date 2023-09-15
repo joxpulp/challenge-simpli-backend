@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../index';
 
 describe('Get /api/motorcycles/list', () => {
-  it('200 - Responds with an object containing paging and products with an array of motorcycles products', async () => {
+  it('200 - Responds with an object containing paging property in null and products with an array of motorcycles products', async () => {
     const response = await request(app).get('/api/motorcycles/list').set('Accept', 'application/json').expect('Content-Type', /json/).expect(200);
 
     expect(response.body).toHaveProperty('products');
@@ -33,7 +33,7 @@ describe('Get /api/motorcycles/list?page=1&limit=2', () => {
 });
 
 describe('Get /api/motorcycles/list?page=1&limit=2&sort_by=asc/desc', () => {
-  it('200 - Responds with an object containing paging with an object containing the following properties: total_pages, current_pages, total_products', async () => {
+  it('200 - Responds with an object containing paging and array of products order from A-Z ', async () => {
     const response = await request(app).get('/api/motorcycles/list').query({ page: 1, limit: 2, sort_by: 'asc' }).set('Accept', 'application/json').expect('Content-Type', /json/).expect(200);
 
     expect(response.body).toHaveProperty('products');
