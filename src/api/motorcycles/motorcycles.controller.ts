@@ -21,7 +21,7 @@ export async function getMotorcycles(req: Request<Params, ProductResponse | Prod
 export async function postMotorcycles(req: Request<Params, ProductResponse | ProductFromDB, Product, QueryParams>, res: Response<ProductFromDB>, next: NextFunction) {
   try {
     const motorcycleAdded = await MotorcyclesModel.insertOne(req.body);
-    res.json(motorcycleAdded);
+    res.status(201).json(motorcycleAdded);
   } catch (error) {
     next(error);
   }

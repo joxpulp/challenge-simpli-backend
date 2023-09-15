@@ -19,3 +19,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   logger.info(`Server is up and running at PORT: ${port}`);
 });
+
+export default app;
