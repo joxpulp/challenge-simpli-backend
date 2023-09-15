@@ -6,20 +6,21 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const Motorcycles = db.collection<Product>('motorcycles');
 
-export async function findAll(currentPage: number = 0, limit: number = 0, sort?: SortDirection) {
+export async function findAll(currentPage: number = 0, limit: number = 0, sort?: SortDirection, minPrice?: number, maxPrice?: number) {
+  const minMaxPriceFilter = { price: { ...(minPrice && { $gte: minPrice }), ...(maxPrice && { $lte: maxPrice }) } };
   const page = currentPage - 1;
-  const totalProducts = await Motorcycles.countDocuments();
+  const totalProducts = await Motorcycles.countDocuments(minMaxPriceFilter);
   const totalPages = Math.ceil(totalProducts / limit);
-  const motorcyclesData = await Motorcycles.find()
+  const motorcyclesData = await Motorcycles.find(minMaxPriceFilter)
     .skip(page * limit)
     .limit(limit)
-    .sort({ ...(sort && { name: sort }) })
+    .sort({ ...(sort && { name: sort }), ...((minPrice || maxPrice) && { price: 'asc' }) })
     .toArray();
 
   const paging = currentPage && limit ? { total_products: totalProducts, total_pages: totalPages, current_page: currentPage } : null;
-  const motorcycleDataWithMeta = { products: motorcyclesData, paging };
+  const motorcycleDataWithPaging = { products: motorcyclesData, paging };
 
-  return motorcycleDataWithMeta;
+  return motorcycleDataWithPaging;
 }
 
 export async function findOne(slug: string) {
