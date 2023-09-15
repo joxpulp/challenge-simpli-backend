@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const Motorcycles = db.collection<Product>('motorcycles');
 
 export async function findAll(currentPage: number = 0, limit: number = 0, sort?: SortDirection, minPrice?: number, maxPrice?: number) {
-  const minMaxPriceFilter = { price: { ...(minPrice && { $gte: minPrice }), ...(maxPrice && { $lte: maxPrice }) } };
+  const minMaxPriceFilter = { ...((minPrice || maxPrice) && { price: { ...(minPrice && { $gte: minPrice }), ...(maxPrice && { $lte: maxPrice }) } }) };
   const page = currentPage - 1;
   const totalProducts = await Motorcycles.countDocuments(minMaxPriceFilter);
   const totalPages = Math.ceil(totalProducts / limit);

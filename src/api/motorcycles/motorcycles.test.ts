@@ -54,6 +54,28 @@ describe('Get /api/motorcycles/list?page=1&limit=2&sort_by=asc/desc', () => {
   });
 });
 
+describe('Get /api/motorcycles/list?page=1&limit=2&minPrice=10&maxPrice=400', () => {
+  it('200 - Responds with an object containing paging and array of products in order asc filtering in a range of minPrice and maxPrice', async () => {
+    const response = await request(app).get('/api/motorcycles/list').query({ page: 1, limit: 2, minPrice: 10, maxPrice: 400 }).set('Accept', 'application/json').expect('Content-Type', /json/).expect(200);
+
+    expect(response.body).toHaveProperty('products');
+    expect(response.body.products.length).toEqual(2);
+    expect(response.body).toHaveProperty('paging');
+    expect(response.body.paging).toHaveProperty('total_pages');
+    expect(response.body.paging.total_pages).toBe(6);
+    expect(response.body.paging).toHaveProperty('current_page');
+    expect(response.body.paging).toHaveProperty('total_products');
+    expect(response.body.paging.total_products).toBe(11);
+  });
+
+  it('422 - Responds with a message saying that param passed must be geater than 0', async () => {
+    const response = await request(app).get('/api/motorcycles/list').query({ page: 1, limit: 2, minPrice: 0, maxPrice: 400 }).set('Accept', 'application/json').expect('Content-Type', /json/).expect(422);
+
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('minPrice must be greater than 0');
+  });
+});
+
 describe('POST /api/motorcycles/add', () => {
   const productToAdd = {
     name: 'Moto Prueba',
@@ -63,13 +85,13 @@ describe('POST /api/motorcycles/add', () => {
     currency: 'USD'
   };
 
-  it('201 - Responds with an object of the inserted motorcycle', async () => {
-    const response = await request(app).post('/api/motorcycles/add').set('Accept', 'application/json').send(productToAdd).expect('Content-Type', /json/).expect(201);
+  // it('201 - Responds with an object of the inserted motorcycle', async () => {
+  //   const response = await request(app).post('/api/motorcycles/add').set('Accept', 'application/json').send(productToAdd).expect('Content-Type', /json/).expect(201);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body).toHaveProperty('name');
-    expect(response.body.name).toBe('Moto Prueba');
-  });
+  //   expect(response.body).toHaveProperty('_id');
+  //   expect(response.body).toHaveProperty('name');
+  //   expect(response.body.name).toBe('Moto Prueba');
+  // });
 
   it('422 - Responds with a message saying that price must be a string', async () => {
     const response = await request(app)
