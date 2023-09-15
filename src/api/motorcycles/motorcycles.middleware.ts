@@ -14,7 +14,7 @@ export async function motorcycleExist(req: Request, res: Response, next: NextFun
     }
   } else {
     const motorcycles = await MotorcyclesModel.findAll();
-    if (motorcycles) {
+    if (motorcycles.products.length) {
       next();
     } else {
       res.status(404);

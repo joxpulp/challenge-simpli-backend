@@ -6,14 +6,14 @@ import { SortDirection } from 'mongodb';
 import { Params } from '../../utils/types/params.types';
 
 export async function getMotorcycles(req: Request<Params, ProductResponse | ProductFromDB | null, Product, QueryParams>, res: Response<ProductResponse | ProductFromDB | null>) {
-  const { page, limit, sort_by, minPrice, maxPrice } = req.query;
+  const { page, limit, sort_by, min_price, max_price } = req.query;
   const { slug } = req.params;
 
   if (slug) {
     const motorcycle = await MotorcyclesModel.findOne(slug);
     res.json(motorcycle);
   } else {
-    const motorcycles = await MotorcyclesModel.findAll(page, limit, sort_by as SortDirection, minPrice, maxPrice);
+    const motorcycles = await MotorcyclesModel.findAll(page, limit, sort_by as SortDirection, min_price, max_price);
     res.json(motorcycles);
   }
 }
