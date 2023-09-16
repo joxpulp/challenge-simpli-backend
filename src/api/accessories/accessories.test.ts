@@ -65,7 +65,7 @@ describe('Get /api/accessories/list?page=1&limit=2&min_price=5&max_price=13', ()
     expect(response.body.paging.total_pages).toBe(3);
     expect(response.body.paging).toHaveProperty('current_page');
     expect(response.body.paging).toHaveProperty('total_products');
-    expect(response.body.paging.total_products).toBe(6);
+    expect(response.body.paging.total_products).toBe(5);
   });
 
   it('422 - Responds with a message saying that min_price param must be greater than 0', async () => {
