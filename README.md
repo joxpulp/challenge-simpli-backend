@@ -1,8 +1,6 @@
 ### SimpliMuv Fullstack challenge - Backend
 
-## Live API:
-
-[https://simpli-back.joxpulp.com/api/motorcycles?page=1&limit=8](https://simpli-back.joxpulp.com/api/motorcycles?page=1&limit=8)
+[Live API](https://simpli-back.joxpulp.com/api/motorcycles?page=1&limit=8)
 
 ## Local Setup:
 
