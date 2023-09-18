@@ -1,10 +1,11 @@
 import { createClient } from 'redis';
+import { CONFIG } from '../../utils/config/config';
 
 export const client = createClient({
-  password: 'Q6wNbtWixg2hMYccND34sUB8kUkIJRjB',
+  password: CONFIG.REDIS_PWD,
   socket: {
-    host: 'redis-18537.c11.us-east-1-2.ec2.cloud.redislabs.com',
-    port: 18537
+    host: CONFIG.REDIS_HOST,
+    port: parseInt(CONFIG.REDIS_PORT)
   }
 });
 
