@@ -1,6 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 import { ValidateData } from './utils/types/validateRequest.types';
+import { client } from './services/redis/redis';
+
+export const cacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const cacheKey = req.originalUrl;
+  try {
+    const data = await client.get(cacheKey);
+    if (data !== null) {
+      res.json(JSON.parse(data));
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 export function validateRequest(validateData: ValidateData) {
   return async (req: Request, res: Response, next: NextFunction) => {
