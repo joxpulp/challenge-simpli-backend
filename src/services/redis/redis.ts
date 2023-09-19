@@ -1,5 +1,6 @@
 import { CONFIG } from '../../utils/config/config';
 import Redis from 'ioredis';
+import { logger } from '../../utils/logs/logger';
 
 export const client = new Redis({
   port: parseInt(CONFIG.REDIS_PORT),
@@ -17,3 +18,7 @@ export async function invalidateCache(cacheKey: string) {
   const cacheKeys = await client.keys(cacheKey);
   await client.del(cacheKeys);
 }
+
+client.on('connect', () => {
+  logger.info('Redis Server Connected');
+});
