@@ -4,23 +4,27 @@ import { Product, ProductFromDB, ProductResponse } from '../../utils/types/produ
 import { QueryParams } from '../../utils/types/query.types';
 import { SortDirection } from 'mongodb';
 import { Params } from '../../utils/types/params.types';
+import { invalidateCache, setCache } from '../../services/redis/redis';
 
 export async function getMotorcycles(req: Request<Params, ProductResponse | ProductFromDB | null, Product, QueryParams>, res: Response<ProductResponse | ProductFromDB | null>) {
   const { page, limit, sort_by, min_price, max_price } = req.query;
   const { slug } = req.params;
+  let response;
 
   if (slug) {
-    const motorcycle = await MotorcyclesModel.findOne(slug);
-    res.json(motorcycle);
+    response = await MotorcyclesModel.findOne(slug);
+    res.json(response);
   } else {
-    const motorcycles = await MotorcyclesModel.findAll(page, limit, sort_by as SortDirection, min_price, max_price);
-    res.json(motorcycles);
+    response = await MotorcyclesModel.findAll(page, limit, sort_by as SortDirection, min_price, max_price);
+    res.json(response);
   }
+  setCache(req.originalUrl, response as object);
 }
 
 export async function postMotorcycles(req: Request<Params, ProductResponse | ProductFromDB, Product, QueryParams>, res: Response<ProductFromDB>, next: NextFunction) {
   try {
     const motorcycleAdded = await MotorcyclesModel.insertOne(req.body);
+    invalidateCache('/api/motorcycles/list?page*');
     res.status(201).json(motorcycleAdded);
   } catch (error) {
     next(error);
