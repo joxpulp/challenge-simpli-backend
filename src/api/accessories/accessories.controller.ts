@@ -4,7 +4,7 @@ import { Product, ProductFromDB, ProductResponse } from '../../utils/types/produ
 import { QueryParams } from '../../utils/types/query.types';
 import { SortDirection } from 'mongodb';
 import { Params } from '../../utils/types/params.types';
-import { setCache } from '../../services/redis/redis';
+import { invalidateCache, setCache } from '../../services/redis/redis';
 
 export async function getAccessories(req: Request<Params, ProductResponse | ProductFromDB | null, Product, QueryParams>, res: Response<ProductResponse | ProductFromDB | null>) {
   const { page, limit, sort_by, min_price, max_price } = req.query;
@@ -24,6 +24,7 @@ export async function getAccessories(req: Request<Params, ProductResponse | Prod
 export async function postAccessories(req: Request<Params, ProductResponse | ProductFromDB, Product, QueryParams>, res: Response<ProductFromDB>, next: NextFunction) {
   try {
     const accessoryAdded = await AccesoriesModel.insertOne(req.body);
+    invalidateCache('/api/accessories/list?page*');
     res.status(201).json(accessoryAdded);
   } catch (error) {
     next(error);

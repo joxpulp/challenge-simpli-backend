@@ -1,26 +1,19 @@
-import { createClient } from 'redis';
 import { CONFIG } from '../../utils/config/config';
-import { logger } from '../../utils/logs/logger';
+import Redis from 'ioredis';
 
-export const client = createClient({
+export const client = new Redis({
+  port: parseInt(CONFIG.REDIS_PORT),
+  host: CONFIG.REDIS_HOST,
   username: 'default',
-  password: CONFIG.REDIS_PWD,
-  socket: {
-    host: CONFIG.REDIS_HOST,
-    port: parseInt(CONFIG.REDIS_PORT)
-  }
+  password: CONFIG.REDIS_PWD
 });
 
 export function setCache(cacheKey: string, data: object) {
-  const daysToSeconds = 24 * 3600;
-  client.setEx(cacheKey, daysToSeconds, JSON.stringify(data));
+  const DAY_TO_SECONDS = 24 * 3600;
+  client.set(cacheKey, JSON.stringify(data), 'EX', DAY_TO_SECONDS);
 }
 
-(async () => {
-  try {
-    await client.connect();
-    logger.info('Redis connected');
-  } catch (error) {
-    logger.info(error);
-  }
-})();
+export async function invalidateCache(cacheKey: string) {
+  const cacheKeys = await client.keys(cacheKey);
+  await client.del(cacheKeys);
+}
